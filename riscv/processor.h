@@ -141,6 +141,8 @@ struct state_t
 
 #ifdef RISCV_ENABLE_COMMITLOG
   commit_log_reg_t log_reg_write;
+  commit_log_reg_t log_rs1_read;
+  commit_log_reg_t log_rs2_read;
   reg_t last_inst_priv;
   int last_inst_xlen;
   int last_inst_flen;
@@ -347,3 +349,6 @@ reg_t illegal_instruction(processor_t* p, insn_t insn, reg_t pc);
   proc->register_insn((insn_desc_t){match, mask, rv32_##name, rv64_##name});
 
 #endif
+
+
+reg_t read_reg_and_log(processor_t* p, uint64_t reg, int src);

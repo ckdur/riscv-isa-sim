@@ -128,16 +128,18 @@ private:
 // helpful macros, etc
 #define MMU (*p->get_mmu())
 #define STATE (*p->get_state())
-#define READ_REG(reg) STATE.XPR[reg]
-#define READ_FREG(reg) STATE.FPR[reg]
-#define RS1 READ_REG(insn.rs1())
-#define RS2 READ_REG(insn.rs2())
+# define READ_REG(reg) STATE.XPR[reg]
+# define READ_FREG(reg) STATE.FPR[reg]
 #define WRITE_RD(value) WRITE_REG(insn.rd(), value)
 
 #ifndef RISCV_ENABLE_COMMITLOG
+# define RS1 READ_REG(insn.rs1())
+# define RS2 READ_REG(insn.rs2())
 # define WRITE_REG(reg, value) STATE.XPR.write(reg, value)
 # define WRITE_FREG(reg, value) DO_WRITE_FREG(reg, freg(value))
 #else
+# define RS1 read_reg_and_log(p, insn.rs1(), 1)
+# define RS2 read_reg_and_log(p, insn.rs2(), 2)
 # define WRITE_REG(reg, value) ({ \
     reg_t wdata = (value); /* value may have side effects */ \
     STATE.log_reg_write = (commit_log_reg_t){(reg) << 1, {wdata, 0}}; \

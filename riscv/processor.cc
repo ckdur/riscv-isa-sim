@@ -16,6 +16,13 @@
 #include <stdexcept>
 #include <algorithm>
 
+reg_t read_reg_and_log(processor_t* p, uint64_t reg, int src) {
+  reg_t rdata = READ_REG(reg);
+  if(src == 1) STATE.log_rs1_read = (commit_log_reg_t){(reg) << 1, {rdata, 0}};
+  else STATE.log_rs2_read = (commit_log_reg_t){(reg) << 1, {rdata, 0}};
+  return rdata;
+}
+
 #undef STATE
 #define STATE state
 

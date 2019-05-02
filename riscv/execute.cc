@@ -39,16 +39,19 @@ static void commit_log_print_insn(state_t* state, reg_t pc, insn_t insn)
 {
 #ifdef RISCV_ENABLE_COMMITLOG
   auto& reg = state->log_reg_write;
+  auto& rs1 = state->log_rs1_read;
+  auto& rs2 = state->log_rs2_read;
   int priv = state->last_inst_priv;
   int xlen = state->last_inst_xlen;
   int flen = state->last_inst_flen;
 
-  fprintf(stderr, "%1d ", priv);
+  // Print RD as always
+  fprintf(stderr, "RD  %1d ", priv);
   commit_log_print_value(xlen, 0, pc);
   fprintf(stderr, " (");
   commit_log_print_value(insn.length() * 8, 0, insn.bits());
 
-  if (reg.addr) {
+  if (reg.addr != -1) {
     bool fp = reg.addr & 1;
     int rd = reg.addr >> 1;
     int size = fp ? flen : xlen;
@@ -58,7 +61,43 @@ static void commit_log_print_insn(state_t* state, reg_t pc, insn_t insn)
   } else {
     fprintf(stderr, ")\n");
   }
-  reg.addr = 0;
+  reg.addr = -1;
+  
+  // Print rs1
+  fprintf(stderr, "RS1 %1d ", priv);
+  commit_log_print_value(xlen, 0, pc);
+  fprintf(stderr, " (");
+  commit_log_print_value(insn.length() * 8, 0, insn.bits());
+  
+  if (rs1.addr != -1) {
+    bool fp = rs1.addr & 1;
+    int r = rs1.addr >> 1;
+    int size = fp ? flen : xlen;
+    fprintf(stderr, ") %c%2d ", fp ? 'f' : 'x', r);
+    commit_log_print_value(size, rs1.data.v[1], rs1.data.v[0]);
+    fprintf(stderr, "\n");
+  } else {
+    fprintf(stderr, ")\n");
+  }
+  rs1.addr = -1;
+  
+  // Print rs2
+  fprintf(stderr, "RS2 %1d ", priv);
+  commit_log_print_value(xlen, 0, pc);
+  fprintf(stderr, " (");
+  commit_log_print_value(insn.length() * 8, 0, insn.bits());
+  
+  if (rs2.addr != -1) {
+    bool fp = rs2.addr & 1;
+    int r = rs2.addr >> 1;
+    int size = fp ? flen : xlen;
+    fprintf(stderr, ") %c%2d ", fp ? 'f' : 'x', r);
+    commit_log_print_value(size, rs2.data.v[1], rs2.data.v[0]);
+    fprintf(stderr, "\n");
+  } else {
+    fprintf(stderr, ")\n");
+  }
+  rs2.addr = -1;
 #endif
 }
 
