@@ -16,7 +16,7 @@
 
 static void help(int exit_code = 1)
 {
-  fprintf(stderr, "Spike RISC-V ISA Simulator " SPIKE_VERSION "\n\n");
+  fprintf(stderr, "Spike RISC-V ISA Simulator " SPIKE_VERSION " (Compiled: " __DATE__ " " __TIME__ ") \n\n");
   fprintf(stderr, "usage: spike [host options] <target program> [target options]\n");
   fprintf(stderr, "Host Options:\n");
   fprintf(stderr, "  -p<n>                 Simulate <n> processors [default 1]\n");

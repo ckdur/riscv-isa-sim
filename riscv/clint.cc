@@ -47,8 +47,11 @@ bool clint_t::store(reg_t addr, size_t len, const uint8_t* bytes)
     for (size_t i = 0; i < procs.size(); ++i) {
       if (!(mask[i] & 0xFF)) continue;
       procs[i]->state.mip &= ~MIP_MSIP;
+      procs[i]->state.mip &= ~MIP_MEIP;
       if (!!(msip[i] & 1))
         procs[i]->state.mip |= MIP_MSIP;
+      if (!!(msip[i] & 2))
+        procs[i]->state.mip |= MIP_MEIP;
     }
   } else if (addr >= MTIMECMP_BASE && addr + len <= MTIMECMP_BASE + procs.size()*sizeof(mtimecmp_t)) {
     memcpy((uint8_t*)&mtimecmp[0] + addr - MTIMECMP_BASE, bytes, len);
