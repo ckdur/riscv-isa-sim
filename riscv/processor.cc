@@ -343,7 +343,7 @@ void processor_t::set_csr(int which, reg_t val)
   val = zext_xlen(val);
   reg_t delegable_ints = MIP_SSIP | MIP_STIP | MIP_SEIP
                        | ((ext != NULL) << IRQ_COP);
-  reg_t all_ints = delegable_ints | MIP_MSIP | MIP_MTIP;
+  reg_t all_ints = delegable_ints | MIP_MSIP | MIP_MTIP | MIP_MEIP;
 
   if (which >= CSR_PMPADDR0 && which < CSR_PMPADDR0 + state.n_pmp) {
     size_t i = which - CSR_PMPADDR0;

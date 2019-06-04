@@ -25,7 +25,7 @@ bool clint_t::load(reg_t addr, size_t len, uint8_t* bytes)
   if (addr >= MSIP_BASE && addr + len <= MSIP_BASE + procs.size()*sizeof(msip_t)) {
     std::vector<msip_t> msip(procs.size());
     for (size_t i = 0; i < procs.size(); ++i)
-      msip[i] = !!(procs[i]->state.mip & MIP_MSIP);
+      msip[i] = !!(procs[i]->state.mip & MIP_MSIP) && ((!!(procs[i]->state.mip & MIP_MEIP)) << 1);
     memcpy(bytes, (uint8_t*)&msip[0] + addr - MSIP_BASE, len);
   } else if (addr >= MTIMECMP_BASE && addr + len <= MTIMECMP_BASE + procs.size()*sizeof(mtimecmp_t)) {
     memcpy(bytes, (uint8_t*)&mtimecmp[0] + addr - MTIMECMP_BASE, len);
