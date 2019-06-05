@@ -283,8 +283,10 @@ void processor_t::take_trap(trap_t& t, reg_t epc)
   reg_t bit = t.cause();
   reg_t deleg = state.medeleg;
   bool interrupt = (bit & ((reg_t)1 << (max_xlen-1))) != 0;
-  if (interrupt)
+  if (interrupt) {
     deleg = state.mideleg, bit &= ~((reg_t)1 << (max_xlen-1));
+    epc = epc-4; // TODO: This is a very temporal fix for Olinguito processors. Please fix it in real processors
+  }
   if (state.prv <= PRV_S && bit < max_xlen && ((deleg >> bit) & 1)) {
     // handle the trap in S-mode
     state.pc = state.stvec;
